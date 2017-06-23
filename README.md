@@ -173,9 +173,9 @@ print("Accuracy: %.2f%%"%(scores[1]*100))
 这是一个使用LSTM做文本分类的常规流程，可以作为解决其他序列分类问题的模板。
 这个网络只是用了基本的输入数据预处理，没有多少的调优，在第二个Epoch已经取得了86.51%的准确率，分类效果已经比较好了，第三个Epoch在训练集和测试集上继续性能继续提升。
 
-我们还要意识到，神经网络模型容易出现过拟合**overfitting**问题，出现过拟合的时候，虽然acc训练精度在每个Epoch稳步提升，但是在测试集上**val_acc开始下降**，如果下降比较厉害，这说明模型已经严重过拟合了。下面我们就要考虑解决过拟合这个问题。
+我们还要意识到，神经网络模型容易出现过拟合**overfitting**问题，出现过拟合的时候，虽然loss训练误差在每个Epoch稳步下降，但是在测试集上**val_loss没有下降，反而有上升的趋势**，如果val_loss比loss高出很多，这说明模型已经严重过拟合了。下面我们就要考虑解决过拟合这个问题。
 
-过拟合的问题是搞机器学习的人绕不开的话题。在深度学习领域，Dropout Layer可以用来减少过拟合的风险。我们看看在添加Dropout网络层之后的模型性能。
+过拟合的问题是搞机器学习的人绕不开的话题，我们无法在取得较高精度的情况下，又能避免过拟合问题，所以需要在模型拟合测试集（及我们案例中的尽量减少loss，获得较高的acc）与模型的泛化能力（val_loss也比较小，与loss相差不大，说明泛化能力较好）之间做一个tradeoff。在深度学习领域，Dropout Layer可以用来减少过拟合的风险。我们看看在添加Dropout网络层之后的模型性能。
 
 ## 使用Dropout
 添加Dropout Layers的代码样例:
@@ -248,7 +248,7 @@ print("Accuracy: %.2f%%" % (scores[1]*100))
 加入Dropout层之后，调整Dropout参数，可以减少过拟合的风险，不过这个超参数的设置需要经验，或者说要多尝试几次。但是仍然无法避免过拟合现象。Keras提供了一个回调函数EarlyStopping()，可以针对Epoch出现val_acc降低的时候，提前停止训练，可以参考keras的官方文档：[keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')](https://keras.io/callbacks/#earlystopping) 试试看。
 
 
-过拟合问题是深度学习中一个常见问题，目前有很多手段，比如调小学习速率，调小反向传播的训练样本数（batch_size）都可能减少过拟合的风险，但是这里面的小tricks有点说不清道不明，还可以试一试别的optimizer，哪个好选哪个，是不是感觉像碰运气。机器学习里面有很多经验性的东西是要多试试才能感受到。解决过拟合问题还有一个重要的手段是使用正则化技术。
+解决过拟合问题，目前有很多手段，比如调小学习速率，调小反向传播的训练样本数（batch_size）都可能减少过拟合的风险，但是这里面的小tricks有点说不清道不明，还可以试一试别的optimizer，哪个好选哪个，是不是感觉像碰运气。机器学习里面有很多经验性的东西是要多试试才能感受到。解决过拟合问题还有一个重要的手段是使用正则化技术。
 
 ```python
 from keras import regularizers
@@ -269,21 +269,20 @@ keras.regularizers.l1_l2(0.)
 model = Sequential()
 model.add(Embedding(top_words,embedding_vecor_length,input_length=max_review_length))
 model.add(LSTM(100)) 
-model.add(Dense(1, activation='sigmoid', activity_regularizer=regularizers.l2(0.001)))
+model.add(Dense(1, activation='sigmoid', kernel_regularizer=regularizers.l2(0.01),activity_regularizer=regularizers.l1(0.001)))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 print(model.summary())
 
 model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=10, batch_size=64)
 ```
 
-
 	Layer (type)                 Output Shape              Param #   
 	=================================================================
-	embedding_20 (Embedding)     (None, 500, 32)           160000    
+	embedding_28 (Embedding)     (None, 500, 32)           160000    
 	_________________________________________________________________
-	lstm_20 (LSTM)               (None, 100)               53200     
+	lstm_28 (LSTM)               (None, 100)               53200     
 	_________________________________________________________________
-	dense_19 (Dense)             (None, 1)                 101       
+	dense_27 (Dense)             (None, 1)                 101       
 	=================================================================
 	Total params: 213,301
 	Trainable params: 213,301
@@ -292,25 +291,25 @@ model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=10, batch_si
 	None
 	Train on 25000 samples, validate on 25000 samples
 	Epoch 1/10
-	25000/25000 [==============================] - 232s - loss: 0.4810 - acc: 0.7754 - val_loss: 0.3878 - val_acc: 0.8433
+	25000/25000 [==============================] - 235s - loss: 0.6545 - acc: 0.6708 - val_loss: 0.6525 - val_acc: 0.7307
 	Epoch 2/10
-	25000/25000 [==============================] - 231s - loss: 0.3194 - acc: 0.8808 - val_loss: 0.3408 - val_acc: 0.8705
+	25000/25000 [==============================] - 234s - loss: 0.5124 - acc: 0.7773 - val_loss: 0.5140 - val_acc: 0.7730
 	Epoch 3/10
-	25000/25000 [==============================] - 231s - loss: 0.2634 - acc: 0.9074 - val_loss: 0.3466 - val_acc: 0.8735
+	25000/25000 [==============================] - 233s - loss: 0.4345 - acc: 0.8295 - val_loss: 0.4061 - val_acc: 0.8470
 	Epoch 4/10
-	25000/25000 [==============================] - 231s - loss: 0.2537 - acc: 0.9109 - val_loss: 0.3504 - val_acc: 0.8677
+	25000/25000 [==============================] - 235s - loss: 0.3456 - acc: 0.8804 - val_loss: 0.4144 - val_acc: 0.8472
 	Epoch 5/10
-	25000/25000 [==============================] - 231s - loss: 0.2103 - acc: 0.9321 - val_loss: 0.3484 - val_acc: 0.8745
+	25000/25000 [==============================] - 234s - loss: 0.3122 - acc: 0.8976 - val_loss: 0.3772 - val_acc: 0.8606
 	Epoch 6/10
-	25000/25000 [==============================] - 232s - loss: 0.2383 - acc: 0.9184 - val_loss: 0.4088 - val_acc: 0.8643
+	25000/25000 [==============================] - 235s - loss: 0.2816 - acc: 0.9112 - val_loss: 0.3769 - val_acc: 0.8680
 	Epoch 7/10
-	25000/25000 [==============================] - 230s - loss: 0.1735 - acc: 0.9461 - val_loss: 0.3928 - val_acc: 0.8691
+	25000/25000 [==============================] - 233s - loss: 0.2782 - acc: 0.9115 - val_loss: 0.3719 - val_acc: 0.8664
 	Epoch 8/10
-	25000/25000 [==============================] - 230s - loss: 0.1570 - acc: 0.9538 - val_loss: 0.4468 - val_acc: 0.8398
+	25000/25000 [==============================] - 234s - loss: 0.2589 - acc: 0.9192 - val_loss: 0.3831 - val_acc: 0.8710
 	Epoch 9/10
-	25000/25000 [==============================] - 231s - loss: 0.1696 - acc: 0.9464 - val_loss: 0.4395 - val_acc: 0.8628
+	25000/25000 [==============================] - 233s - loss: 0.2416 - acc: 0.9275 - val_loss: 0.3677 - val_acc: 0.8724
 	Epoch 10/10
-	25000/25000 [==============================] - 231s - loss: 0.1583 - acc: 0.9538 - val_loss: 0.4564 - val_acc: 0.8670
+	25000/25000 [==============================] - 233s - loss: 0.2440 - acc: 0.9261 - val_loss: 0.3717 - val_acc: 0.8630
 
 # 结合卷积神经网络优化序列分类的整体性能
 
@@ -376,7 +375,7 @@ model.fit(X_train,y_train,validation_data=(X_test,y_test), epochs=10,batch_size=
 	Epoch 10/10
 	25000/25000 [==============================] - 81s - loss: 0.1026 - acc: 0.9644 - val_loss: 0.3803 - val_acc: 0.8812
 
-添加CNN layer之后，每一轮的训练时间大大减少了，大约降到了原来的一半时间，精度也有所提升，取得了更好的performance。
+添加CNN layer之后，每一轮的训练时间大大减少了，大约降到了原来的1/3时间，精度也有所提升，整体上取得了更好的performance。
 
 # 总结回顾
 这篇文章我们介绍了如何用LSTM网络来解决文本分类问题。如何减少模型过拟合的风险，以及怎样结合CNN网络中学习到的spatial structure来优化NLP问题的特征，从而提升整个网络的性能。
