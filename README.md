@@ -331,7 +331,7 @@ model.add(LSTM(100,dropout=0.2, recurrent_dropout=0.2))
 model.add(Dense(1,activation='sigmoid'))
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 print(model.summary())
-model.fit(X_train,y_train,validation_data=(X_test,y_test), epochs=5,batch_size=64)
+model.fit(X_train,y_train,validation_data=(X_test,y_test), epochs=10,batch_size=64)
 ```
 
     _________________________________________________________________
