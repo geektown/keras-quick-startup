@@ -120,9 +120,9 @@ X_test=sequence.pad_sequences(X_test, maxlen = max_review_length)
 + 选择一个较大的batch_size=64
 
 ```python
-embedding_vecor_length=32
+embedding_vector_length=32
 model=Sequential()
-model.add(Embedding(top_words,embedding_vecor_length,input_length=max_review_length))
+model.add(Embedding(top_words,embedding_vetcor_length,input_length=max_review_length))
 model.add(LSTM(100)) # LSTM的具体用法参考 https://keras.io/layers/recurrent/#lstm
 model.add(Dense(1,activation='sigmoid'))
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
@@ -200,9 +200,9 @@ X_train = sequence.pad_sequences(X_train, maxlen=max_review_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_review_length)
 
 # create the model
-embedding_vecor_length = 32
+embedding_vector_length = 32
 model = Sequential()
-model.add(Embedding(top_words,embedding_vecor_length,input_length=max_review_length))
+model.add(Embedding(top_words,embedding_vector_length,input_length=max_review_length))
 model.add(LSTM(100, dropout=0.3, recurrent_dropout=0.1))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -267,7 +267,7 @@ keras.regularizers.l1_l2(0.)
 使用正则化控制过拟合的实验代码如下：
 ```python
 model = Sequential()
-model.add(Embedding(top_words,embedding_vecor_length,input_length=max_review_length))
+model.add(Embedding(top_words,embedding_vector_length,input_length=max_review_length))
 model.add(LSTM(100)) 
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=regularizers.l2(0.01),activity_regularizer=regularizers.l1(0.001)))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -320,9 +320,9 @@ model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=10, batch_si
 
 ```python
 # LSTM with Dropout and CNN classification
-embedding_vecor_length=32
+embedding_vector_length=32
 model=Sequential()
-model.add(Embedding(top_words,embedding_vecor_length,input_length=max_review_length))
+model.add(Embedding(top_words,embedding_vector_length,input_length=max_review_length))
 model.add(SpatialDropout1D(0.3))
 model.add(Conv1D(activation="relu", padding="same", filters=64, kernel_size=5))
 model.add(MaxPooling1D(pool_size=4))
