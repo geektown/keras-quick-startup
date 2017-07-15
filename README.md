@@ -16,14 +16,14 @@ IMDB Sentiment Analysis Using Keras. Just for experience.
 使用广为熟知的IMDB电影评论来做情感分类。这个庞大的影评数据集包含了25000 个影评 (good or bad) 用于训练（Train），同样还有25000个评论用于测试（Test）。我们要做的事情就是给定一条电影评论，判断它的情感是正面的（good）还是负面的（bad）。这些数据是由Stanford学者收集的，2011年的论文中，将数据集对半分成训练集和测试集，当时取得了88.89%的准确率。
 
 # 准备工具
-深度学习领域有很多优秀的平台，比如TensorFlow、MX-NET、Torch、Caffe等，笔者接触Tensorflow较多，因此使用TensorFlow来完成这个任务。[TensorFlow](https://github.com/tensorflow/tensorflow)是Google推出的可扩展的深度学平台，可以完成基于data flow graphs的计算任务。使用过TensorFlow API进行编程的同学可能感觉到TensorFlow提供的API虽然功能非常强大，但是抽象的程度比较低，比较冗长和繁琐，使用起来不是很自然。Keras是一个高层神经网络API，由纯Python编写而成并基Tensorflow或Theano。Keras 能够把你的idea迅速转换为结果，非常适合于简易和快速的原型设计，支持CNN和RNN，或二者的结合；无缝CPU和GPU切换。Keras适用的Python版本是：Python 2.7-3.5。更详细的信息请参考[Keras中文文档](http://keras-cn.readthedocs.io/en/latest/)。
+深度学习领域有很多优秀的平台，比如TensorFlow、MXNet、Torch、Caffe等，笔者接触Tensorflow较多，因此使用TensorFlow来完成这个任务。[TensorFlow](https://github.com/tensorflow/tensorflow)是Google推出的可扩展的深度学平台，可以完成基于data flow graphs的计算任务。使用过TensorFlow API进行编程的同学可能感觉到TensorFlow提供的API虽然功能非常强大，但是抽象的程度比较低，比较冗长和繁琐，使用起来不是很自然。Keras是一个高层神经网络API，由纯Python编写而成并基Tensorflow或Theano。Keras 能够把你的idea迅速转换为结果，非常适合于简易和快速的原型设计，支持CNN和RNN，或二者的结合；无缝CPU和GPU切换。Keras适用的Python版本是：Python 2.7-3.5。更详细的信息请参考[Keras中文文档](http://keras-cn.readthedocs.io/en/latest/)。
 
 # 构建环境
 推荐使用docker镜像的方式搭建深度学习平台环境。不过说实话，深度学习没有GPU或者强悍的服务器，用起来还真是不容易，作为一个简单的教程，我们还是使用CPU模式方便大家都能用起来。最基础的软件栈，需要一套python开发环境，Keras和Tensorflow的最新版本。现在构建环境已经是非常便捷了，不用从头开始构建镜像。store.docker.com 上面已有很多现成的镜像可以使用，选择一个合适的基础镜像，根据自己的需求进行修改，构建适应自己环境的镜像文件。
 
 笔者选择一个只有命令行模式的keras镜像，通过添加jupyter-notebook 来创建一个更适合编码的镜像环境。
 
-> 如果你还没有接触过Jupyter Notebook，这里简单说明一下。Juypter notebook 此前被称为IPython notebook，是一个交互式笔记本，支持运行 40 多种编程语言。对于希望编写漂亮的交互式文档的人来说是一个强大工具。同时支持代码和Markdown格式的文档，方便分享代码。很多主流的代码仓库或者会议，都会以Jupyter Notebook的方式进行对外交流。
+> 如果你还没有接触过Jupyter Notebook，这里简单说明一下。Jupyter notebook 此前被称为IPython notebook，是一个交互式笔记本，支持运行 40 多种编程语言。对于希望编写漂亮的交互式文档的人来说是一个强大工具。同时支持代码和Markdown格式的文档，方便分享代码。很多主流的代码仓库或者会议，都会以Jupyter Notebook的方式进行对外交流。
 
 构建docker镜像的Dockerfile文件如下：
 
