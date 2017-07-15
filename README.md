@@ -175,7 +175,7 @@ print("Accuracy: %.2f%%"%(scores[1]*100))
 
 我们还要意识到，神经网络模型容易出现过拟合**overfitting**问题，出现过拟合的时候，虽然loss训练误差在每个Epoch稳步下降，但是在测试集上**val_loss没有下降，反而有上升的趋势**，如果val_loss比loss高出很多，这说明模型已经严重过拟合了。下面我们就要考虑解决过拟合这个问题。
 
-过拟合的问题是搞机器学习的人绕不开的话题，我们无法在取得较高精度的情况下，又能避免过拟合问题，所以需要在模型拟合测试集（及我们案例中的尽量减少loss，获得较高的acc）与模型的泛化能力（val_loss也比较小，与loss相差不大，说明泛化能力较好）之间做一个tradeoff。在深度学习领域，Dropout Layer可以用来减少过拟合的风险。我们看看在添加Dropout网络层之后的模型性能。
+过拟合的问题是搞机器学习的人绕不开的话题，我们无法在取得较高精度的情况下，又能避免过拟合问题，所以需要在模型拟合测试集（及我们案例中的尽量减少loss，获得较高的acc）与模型的泛化能力（val_loss也比较小，与loss相差不大，说明泛化能力较好）之间做一个tradeoff。在深度学习领域，Dropout Layer可以作为减少过拟合风险的一种技术。我们看看在添加Dropout Layer之后的模型性能。
 
 ## 使用Dropout
 添加Dropout Layers的代码样例:
@@ -245,7 +245,7 @@ print("Accuracy: %.2f%%" % (scores[1]*100))
 
 我们从执行结果看，Accuracy与没有Dropout的时候第二个Epoch还要降低一些，但是由于减少了过拟合的风险，模型的结构风险会降低，迁移能力理论上会好一些。
 
-加入Dropout层之后，调整Dropout参数，可以减少过拟合的风险，不过这个超参数的设置需要经验，或者说要多尝试几次。但是仍然无法避免过拟合现象。Keras提供了一个回调函数EarlyStopping()，可以针对Epoch出现val_acc降低的时候，提前停止训练，可以参考keras的官方文档：[keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')](https://keras.io/callbacks/#earlystopping) 试试看。
+加入Dropout层之后，调整Dropout参数，可以减少过拟合的风险，不过这个超参数的设置需要经验，或者说要多尝试几次。但是仍然无法避免过拟合现象。Keras提供了一个回调函数EarlyStopping()，可以针对Epoch出现val_acc降低的时候，提前停止训练，可以参考keras的官方文档：[keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')](https://keras.io/callbacks/#earlystopping) 试试看。通常在工程实践中，我们可以认为如果模型在测试集上连续的5个epoch中的性能表现都没有提升，则认为可以提前停止了。
 
 
 解决过拟合问题，目前有很多手段，比如调小学习速率，调小反向传播的训练样本数（batch_size）都可能减少过拟合的风险，但是这里面的小tricks有点说不清道不明，还可以试一试别的optimizer，哪个好选哪个，是不是感觉像碰运气。机器学习里面有很多经验性的东西是要多试试才能感受到。解决过拟合问题还有一个重要的手段是使用正则化技术。
