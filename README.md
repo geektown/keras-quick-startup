@@ -372,3 +372,5 @@ model.fit(X_train,y_train,validation_data=(X_test,y_test), epochs=10,batch_size=
 # 总结回顾
 这篇文章我们介绍了如何用LSTM网络来解决文本分类问题。如何减少模型过拟合的风险，以及怎样结合CNN网络中学习到的spatial structure来优化NLP问题的特征，从而提升整个网络的性能。
 对于一个文本分类问题，我们可以沿着这个思路设计我们的网络结构，基本上能应该能够解决常见的文本序列分类问题了。当然如果要在整个基础上继续小步提升，还需要对数据进行较多的预处理，对网络的参数进行经验性改进。
+
+> 声明：文中代码参考了Keras的官方[Example](https://github.com/fchollet/keras/blob/master/examples/imdb_cnn_lstm.py)和Jason Brownlee的[博客](http://machinelearningmastery.com/sequence-classification-lstm-recurrent-neural-networks-python-keras/)。基于这些代码，加上作者对问题的理解和实践整合而成。对代码库的作者表示感谢！
