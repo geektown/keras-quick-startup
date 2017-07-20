@@ -16,7 +16,7 @@ IMDB Sentiment Analysis Using Keras. Just for experience.
 使用广为熟知的IMDB电影评论来做情感分类。这个庞大的影评数据集包含了25000 个影评 (good or bad) 用于训练（Train），同样还有25000个评论用于测试（Test）。我们要做的事情就是给定一条电影评论，判断它的情感是正面的（good）还是负面的（bad）。这些数据是由Stanford学者收集的，2011年的论文中，将数据集对半分成训练集和测试集，当时取得了88.89%的准确率。
 
 # 准备工具
-深度学习领域有很多优秀的平台，比如TensorFlow、MXNet、Torch、Caffe等，笔者接触Tensorflow较多，因此使用TensorFlow来完成这个任务。[TensorFlow](https://github.com/tensorflow/tensorflow)是Google推出的可扩展的深度学平台，可以完成基于data flow graphs的计算任务。使用过TensorFlow API进行编程的同学可能感觉到TensorFlow提供的API虽然功能非常强大，但是抽象的程度比较低，比较冗长和繁琐，使用起来不是很自然。Keras是一个高层神经网络API，由纯Python编写而成并基Tensorflow或Theano。Keras 能够把你的idea迅速转换为结果，非常适合于简易和快速的原型设计，支持CNN和RNN，或二者的结合；无缝CPU和GPU切换。Keras适用的Python版本是：Python 2.7-3.5。更详细的信息请参考[Keras中文文档](http://keras-cn.readthedocs.io/en/latest/)。
+深度学习领域有很多优秀的平台，比如TensorFlow、MXNet、Torch、Caffe等。[TensorFlow](https://github.com/tensorflow/tensorflow)是Google推出的可扩展的深度学平台，可以完成基于data flow graphs的计算任务。使用过TensorFlow API进行编程的同学可能感觉到TensorFlow提供的API虽然功能非常强大，但是抽象的程度比较低，比较冗长和繁琐，使用起来不是很自然。Keras是一个高层神经网络API，由纯Python编写而成并基Tensorflow或Theano。Keras 能够把你的idea迅速转换为结果，非常适合于简易和快速的原型设计，支持CNN和RNN，或二者的结合；无缝CPU和GPU切换。Keras适用的Python版本是：Python 2.7-3.5。更详细的信息请参考[Keras中文文档](http://keras-cn.readthedocs.io/en/latest/)。本文使用Keras来完成这个分析任务，代码更简洁易读。
 
 # 构建环境
 推荐使用docker镜像的方式搭建深度学习平台环境。不过说实话，深度学习没有GPU或者强悍的服务器，用起来还真是不容易，作为一个简单的教程，我们还是使用CPU模式方便大家都能用起来。最基础的软件栈，需要一套python开发环境，Keras和Tensorflow的最新版本。现在构建环境已经是非常便捷了，不用从头开始构建镜像。store.docker.com 上面已有很多现成的镜像可以使用，选择一个合适的基础镜像，根据自己的需求进行修改，构建适应自己环境的镜像文件。
@@ -41,10 +41,7 @@ EXPOSE 8888
 CMD ["jupyter", "notebook", "--allow-root", "--no-browser", "--ip=0.0.0.0", "--NotebookApp.token="]
 
 ```
-Docker镜像构建指令：
-
-`docker build -t keras:2.0.4-py2-tf1.1.0-cpu .`
-
+Docker镜像构建指令：`docker build -t keras:2.0.4-py2-tf1.1.0-cpu .`
 
 我们采用TensorFlow作为Keras的backend，本镜像包含的主要组件版本号如下：
 
@@ -53,16 +50,11 @@ Keras (2.0.4)
 numpy (1.12.1)
 pandas (0.20.1)
 tensorflow (1.1.0)
-
 ```
 
-使用`docker run`命令启动一个容器：
+使用`docker run`命令启动一个容器：`docker run -d --name keras -v /sharedfolder:/notebook/sharedfolder -p 8888:8888 keras:2.0.4-py2-tf1.1.0-cpu`
 
-```shell
-docker run -d --name keras -v /sharedfolder:/notebook/sharedfolder -p 8888:8888 keras:2.0.4-py2-tf1.1.0-cpu
-```
-
-容器启动完成之后，就可以通过浏览器访问到jupyter notebook的编程页面到了。建议使用chrome或者firefox浏览器。具体访问地址就是`http://${your-container-host-ip}:8888`
+容器启动完成之后，就可以通过浏览器访问到jupyter notebook的编程页面了。而且在容器和主机之间做了文件映射，方便共享。建议使用chrome或者firefox浏览器来访问，具体访问地址就是`http://${your-container-host-ip}:8888`
 
 # 数据理解
 Keras提供了直接访问IMDB dataset的内置函数 `imdb.load_data()` 。调用该函数能够直接生成深度学习模型的数据格式。评论中的单词已经被一个整形值取代，这个整形值代表了这个单词在数据集中的索引。因此影评序列就是由一连串的整形值组成。
@@ -194,12 +186,12 @@ numpy.random.seed(7)
 top_words = 5000
 (X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=top_words)
 
-# truncate and pad input sequences
+# truncate and pad
 max_review_length = 500
 X_train = sequence.pad_sequences(X_train, maxlen=max_review_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_review_length)
 
-# create the model
+# create model
 embedding_vector_length = 32
 model = Sequential()
 model.add(Embedding(top_words,embedding_vector_length,input_length=max_review_length))
