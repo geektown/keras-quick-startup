@@ -308,6 +308,8 @@ model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=10, batch_si
 卷积神经网络在图像识别和语音识别领域取得了非凡的成就，特别擅长于从输入数据中学习spatial structure，因此对于处理NLP问题很有帮助。利用CNN学习到的特征可以用于LSTM层的训练，对模型的性能理论上会有提升。
 我们使用keras可以很方便的在Embedding Layer添加一个 one-dimensional CNN and max pooling layers。以此作为LSTM层的特征输入。
 
+> 怎么理解spatial structure，我们可以从这个角度去想，如果一个输入变量与其相邻的输入变量之间的关系比它距离较远的输入变量之间的关系更密切，则可以认为这样的数据具有spatial structure特征。例如图像处理里面，临近的像素点之间的相关性比间隔较远的像素之间相关性更大。在语言中也有这样的现象。所以可以借助CNN来优化特征。
+
 代码示例如下:
 
 ```python
